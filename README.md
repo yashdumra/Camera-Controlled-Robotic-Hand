@@ -1,10 +1,10 @@
 # Vision-Controlled Robotic Hand
 
-**A webcam-to-servo prototype that tracks a human hand and controls five motors, one per finger.**
+**A computer-vision and Arduino control prototype designed to translate hand gestures into five individual servo commands.**
 
 **Python** · **OpenCV / MediaPipe via cvzone** · **Arduino Uno** · **Embedded C++** · **Serial communication** · **Signal filtering**
 
-> **Build status:** The webcam tracking, filtering, serial link, and five-servo electronics were built and tested. The complete mechanical hand structure was still a planned next step at the time of the project presentation. The controller currently supports **binary finger positions (0° or 180°)**, not continuous joint tracking.
+> **Build status:** Webcam tracking and five-finger classification are demonstrated in the video. The repository contains the original Arduino sketch that accepts five serial values and drives five servo outputs, plus a Tinkercad wiring design. The recovered Python script does not include the serial-transmission call, so the repository does **not yet provide a verified end-to-end runnable demo**. The full mechanical hand was a planned next step. Output positions are binary (**0° or 180°**).
 
 ### 🎥 Demonstration
 
@@ -43,11 +43,11 @@ The important engineering problem wasn't just detecting a hand: it was making **
 | Controller | Arduino Uno |
 | Actuators | Five servos, each controlling one finger |
 | Servo signal pins | **3, 5, 6, 9, 10** |
-| Servo power | Shared breadboard power rail rather than powering all motors from the Arduino 5 V pin |
+| Servo power in Tinkercad design | Shared breadboard positive rail connected to the Arduino 5 V pin |
 | Ground | Shared ground between the servo rail and Arduino for a consistent signal reference |
 | Connection to host | USB serial communication |
 
-Power distribution and grounding mattered because multiple servos can draw substantial current at once. Separating their power rail from the Arduino's 5 V pin and maintaining a common ground were deliberate design choices.
+**Wiring note:** The Tinkercad diagram shows the five servos sharing a breadboard power rail **supplied by the Arduino's 5 V pin**, with a common ground. This is a useful wiring illustration but **not a recommended physical power arrangement for five servos**: simultaneous motor loads can overload or reset the Arduino. For a real build, use a suitably rated external servo supply and connect its ground to the Arduino ground. The diagram is a Tinkercad design, not photographic proof of a physical assembly.
 
 ## Software implementation
 
@@ -87,7 +87,7 @@ This made motor commands less sensitive to single-frame errors. It also introduc
 
 ### 3. Sending commands to the Arduino
 
-Python sends five comma-separated finger states over USB serial, ending each message with a newline.
+The intended protocol sends five comma-separated finger states over USB serial, ending each message with a newline. **The available Python script computes and prints this list but does not currently transmit it.**
 
 **Example message:**
 
@@ -105,7 +105,7 @@ myServo4.write(ringFinger * 180);
 myServo5.write(pinky * 180);
 ```
 
-The result is **independent binary control of five servo channels**. These code excerpts describe the tested prototype; continuous 0–180° tracking remains a future improvement.
+The Arduino sketch implements **independent binary control of five servo channels**. Its serial parser does not yet validate that all five integers were received before commanding the motors; input validation would be an improvement. Continuous 0–180° tracking is also future work.
 
 ## What I learned
 
@@ -122,14 +122,20 @@ The result is **independent binary control of five servo channels**. These code 
 - Live webcam hand-landmark detection using cvzone / MediaPipe
 - Per-finger geometric state detection
 - 10-frame stability filtering with a 7-of-10 threshold
-- Python-to-Arduino serial command pipeline
-- Five individual servo outputs and supporting wiring
+- Defined CSV serial protocol and Arduino-side parser (Python transmit call still missing from recovered script)
+- Arduino firmware for five individual servo outputs and a Tinkercad wiring diagram
 
 **Planned improvements**
 - Build and integrate the full physical robotic-hand structure
 - Replace binary 0°/180° states with proportional finger angles
 - Evaluate a PCA9685 servo driver for more flexible multi-servo control
-- Recover or rebuild and verify the full Python-to-Arduino serial integration and publish Arduino firmware and hardware photos
+- Restore the Python PySerial write call and test the entire host-to-Arduino control path
+- Add input validation to the Arduino parser and use a properly rated external servo supply for a physical build
+
+## Source code
+
+- [Python hand-tracking and filtering](src/hand_tracking.py) — recovered tracking script; displays/prints states but does not transmit serial data
+- [Arduino five-servo controller](arduino/robotic_hand/robotic_hand.ino) — original sketch shared by the author; expects a newline-terminated CSV message of five binary values at 9600 baud
 
 ## Running the Python tracking demo
 
@@ -142,7 +148,7 @@ python src/hand_tracking.py
 
 A webcam is required. This script displays tracked hand landmarks and prints five finger states, stabilized states and the corresponding 0°/180° endpoint angles.
 
-**Important:** The recovered Python script prints `send_data` but does **not** include an actual PySerial write call, so this published file alone does not drive the Arduino. The Arduino firmware and full host-to-board integration still need to be recovered or recreated and verified. The system design described above comes from the original project presentation.
+**Important:** The recovered Python script prints `send_data` but does **not** include an actual PySerial write call, so this published file alone does not drive the Arduino. The Arduino firmware is now included, but the host-to-board integration needs its missing Python serial write call restored and tested. The system design described above comes from the original project presentation.
 
 ---
 
