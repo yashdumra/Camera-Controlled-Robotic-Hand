@@ -10,7 +10,11 @@
 
 **[Watch the hand-tracking demonstration](https://docs.google.com/file/d/1-BRF2H81tyz4TS4ig6DXwvBep5X_IxW4/preview)**
 
-*Video link taken from the “Live Demonstration of Hand Tracking” slide of my project presentation. The recording is hosted on Google Drive, rather than embedded in this repository.*
+The demonstration recording shows the webcam processing a live hand as it moves between open and closed poses, with hand-landmark overlays updating in the preview and finger-state output appearing in the Python console. This illustrates the **computer-vision and gesture-classification stages** of the pipeline.
+
+**Scope of the footage:** The video is a recording of the computer screen; it does **not** show physical servo motion or a completed mechanical hand. Servo-control implementation and wiring are documented separately below.
+
+*The video is linked from my original project presentation. A smaller, GitHub-friendly MP4 copy is being prepared for the repository.*
 
 ## Why I built it
 
