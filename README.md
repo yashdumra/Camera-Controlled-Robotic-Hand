@@ -129,11 +129,20 @@ The result is **independent binary control of five servo channels**. These code 
 - Build and integrate the full physical robotic-hand structure
 - Replace binary 0°/180° states with proportional finger angles
 - Evaluate a PCA9685 servo driver for more flexible multi-servo control
-- Publish the original Python/Arduino source files and hardware photos alongside a reproducible setup guide
+- Recover or rebuild and verify the full Python-to-Arduino serial integration and publish Arduino firmware and hardware photos
 
-## Repository status
+## Running the Python tracking demo
 
-This repository currently contains the project documentation. The original Python and Arduino source files are being prepared for publication; **the short excerpts above are not a complete runnable implementation**.
+The repository now includes [`src/hand_tracking.py`](src/hand_tracking.py), reconstructed from my saved original script with indentation fixed and a clean exit using **Q**.
+
+```bash
+pip install opencv-python cvzone mediapipe
+python src/hand_tracking.py
+```
+
+A webcam is required. This script displays tracked hand landmarks and prints five finger states, stabilized states and the corresponding 0°/180° endpoint angles.
+
+**Important:** The recovered Python script prints `send_data` but does **not** include an actual PySerial write call, so this published file alone does not drive the Arduino. The Arduino firmware and full host-to-board integration still need to be recovered or recreated and verified. The system design described above comes from the original project presentation.
 
 ---
 
