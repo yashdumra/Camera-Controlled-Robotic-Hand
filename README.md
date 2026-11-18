@@ -137,4 +137,4 @@ This repository currently contains the project documentation. The original Pytho
 
 ---
 
-*Personal project · Summer 2026 · Prepared as part of a UBC Solar application portfolio*
+*Personal project · Summer 2026*
